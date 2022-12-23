@@ -1,10 +1,11 @@
 package com.example.messagingrabbitmq;
 
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class Runner implements CommandLineRunner {
@@ -19,9 +20,11 @@ public class Runner implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		System.out.println("Sending message...");
-		rabbitTemplate.convertAndSend(MessagingRabbitmqApplication.topicExchangeName, "foo.bar.baz", "Hello from RabbitMQ!");
-		receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
+		Scanner stdin = new Scanner(System.in);
+		while (true) {
+			rabbitTemplate.convertAndSend(MessagingRabbitmqApplication.exchangeName, MessagingRabbitmqApplication.queueName, stdin.nextLine());
+			receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
+		}
 	}
 
 }
